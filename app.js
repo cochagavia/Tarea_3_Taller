@@ -79,7 +79,8 @@ app.post("/recibe_transaction", async (req, res) => {
       }
     }
   } catch (error) {
-    console.error("Error al recibir transacción:", error.message);
+    // console.error("Error al recibir transacción:", error.message);
+    console.error("Error al recibir transacción");
     res.sendStatus(500);
   }
 });
