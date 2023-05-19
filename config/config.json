@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "cristobalochagavia@uc.cl",
+    "password": "19639902",
+    "database": "cristobalochagavia@uc.cl",
+    "host": "langosta.ing.puc.cl",
+    "port": 5432,
+    "dialect": "postgres"
+  }
+}
