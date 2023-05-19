@@ -3,7 +3,7 @@ const axios = require("axios");
 const app = express();
 const port = 3000;
 
-const { Message } = require("./models");
+const { message } = require("./models");
 
 const ngrokUrl = "https://af9c-190-196-138-146.ngrok-free.app";
 app.use(express.json());
@@ -52,14 +52,14 @@ app.post("/recibe_transaction", async (req, res) => {
     if (decodedFields !== null) {
       const id = body.message.messageId;
 
-      const result = await Message.findOne({
+      const result = await message.findOne({
         where: { messageId: id },
       });
 
       console.log(result);
 
       if (result === null) {
-        const message = await Message.create({
+        const message = await message.create({
           attributes: {
             key: "value",
           },
