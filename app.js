@@ -59,7 +59,7 @@ app.post("/recibe_transaction", async (req, res) => {
       console.log(result);
 
       if (result === null) {
-        const message = await message.create({
+        const new_message = await message.create({
           attributes: {
             key: "value",
           },
@@ -80,7 +80,7 @@ app.post("/recibe_transaction", async (req, res) => {
     }
   } catch (error) {
     // console.error("Error al recibir transacción:", error.message);
-    console.error("Error al recibir transacción");
+    console.error("Error al recibir transacción:", error.message);
     res.sendStatus(500);
   }
 });
