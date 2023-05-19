@@ -49,7 +49,7 @@ app.post("/recibe_transaction", async (req, res) => {
     const decodedFields = decodeISO8583(body.message.data);
     console.log(decodedFields);
 
-    if (decodedFields === null) {
+    if (decodedFields !== null) {
       const id = body.message.messageId;
 
       const result = await Message.findOne({
