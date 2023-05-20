@@ -51,7 +51,7 @@ app.post("/recibe_transaction", async (req, res) => {
     if (decodedFields !== null) {
       const id = body.message.messageId;
 
-      procesarTransaccion(decodedFields.sourceBank, decodedFields.destinationBank, decodedFields.amount, decodedFields.operationType)
+      procesarTransaccion(decodedFields.sourceBank, decodedFields.destinationBank, decodedFields.amount, decodedFields.operationType, resultados)
 
       const result = await message.findOne({
         where: { messageId: id },
@@ -122,7 +122,7 @@ function decodeISO8583(encodedMessage) {
 
 
 // FUNCIÓN SUMAR O RESTAR RESULTADO ENTRE BANCOS ************************************************************************************************
-function procesarTransaccion(banco1, banco2, monto, operacion) {
+function procesarTransaccion(banco1, banco2, monto, operacion, resultados) {
   // Realiza la suma o resta de los montos según corresponda
 
   // const resultado = banco1 + banco2 >= 0 ? monto : -monto;
