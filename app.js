@@ -51,7 +51,75 @@ app.post("/recibe_transaction", async (req, res) => {
     if (decodedFields !== null) {
       const id = body.message.messageId;
 
-      procesarTransaccion(decodedFields.sourceBank, decodedFields.destinationBank, decodedFields.amount, decodedFields.operationType, resultados)
+      // procesarTransaccion(decodedFields.sourceBank, decodedFields.destinationBank, decodedFields.amount, decodedFields.operationType, resultados)
+
+      const banco1 = decodedFields.sourceBank;
+      const banco2 = decodedFields.destinationBank;
+      const monto = decodedFields.amount;
+      const operacion = decodedFields.operationType;
+      console.log(banco1, banco2, monto, operacion);
+
+      // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
+      const conciliacionExistente1 = resultados.findOne({
+        where: {
+          banco1: banco1,
+          banco2: banco2,
+        },
+      });
+    
+      // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
+      const conciliacionExistente2 = resultados.findOne({
+        where: {
+          banco1: banco2,
+          banco2: banco1,
+        },
+      });
+    
+      if(operacion === "Envío de fondos"){
+        const new_monto = -monto;
+      }else{
+        const new_monto = monto;
+      }
+    
+    
+      if (!conciliacionExistente1 | !conciliacionExistente2) {
+        // Si la tupla no está creada, crea una nueva instancia de conciliación
+        const nuevaConciliacion = resultados.create({
+          banco1,
+          banco2,
+          new_monto,
+        });
+    
+        // return resultado;
+      } else if (conciliacionExistente1) {
+    
+        const monto_sumado = conciliacionExistente1.monto + new_monto;
+        // Si la tupla ya existe, actualiza el monto existente
+        resultados.update(
+          { monto: monto_sumado },
+          {
+            where: {
+              banco1: banco1,
+              banco2: banco2,
+            },
+          }
+        );
+        // return resultado;
+      } else if (conciliacionExistente2) {
+    
+        const monto_sumado = conciliacionExistente2.monto - new_monto;
+        // Si la tupla ya existe, actualiza el monto existente
+        resultados.update(
+          { monto: monto_sumado },
+          {
+            where: {
+              banco1: banco2,
+              banco2: banco1,
+            },
+          }
+        );
+        // return resultado;
+      }
 
       const result = await message.findOne({
         where: { messageId: id },
@@ -121,75 +189,75 @@ function decodeISO8583(encodedMessage) {
 }
 
 
-// FUNCIÓN SUMAR O RESTAR RESULTADO ENTRE BANCOS ************************************************************************************************
-function procesarTransaccion(banco1, banco2, monto, operacion, resultados) {
-  // Realiza la suma o resta de los montos según corresponda
+// // FUNCIÓN SUMAR O RESTAR RESULTADO ENTRE BANCOS ************************************************************************************************
+// function procesarTransaccion(banco1, banco2, monto, operacion, resultados) {
+//   // Realiza la suma o resta de los montos según corresponda
 
-  // const resultado = banco1 + banco2 >= 0 ? monto : -monto;
-  console.log(banco1, banco2, monto, operacion);
+//   // const resultado = banco1 + banco2 >= 0 ? monto : -monto;
+//   console.log(banco1, banco2, monto, operacion);
 
-  // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
-  const conciliacionExistente1 = resultados.findOne({
-    where: {
-      banco1: banco1,
-      banco2: banco2,
-    },
-  });
+//   // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
+//   const conciliacionExistente1 = resultados.findOne({
+//     where: {
+//       banco1: banco1,
+//       banco2: banco2,
+//     },
+//   });
 
-  // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
-  const conciliacionExistente2 = resultados.findOne({
-    where: {
-      banco1: banco2,
-      banco2: banco1,
-    },
-  });
+//   // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
+//   const conciliacionExistente2 = resultados.findOne({
+//     where: {
+//       banco1: banco2,
+//       banco2: banco1,
+//     },
+//   });
 
-  if(operacion === "Envío de fondos"){
-    const new_monto = -monto;
-  }else{
-    const new_monto = monto;
-  }
+//   if(operacion === "Envío de fondos"){
+//     const new_monto = -monto;
+//   }else{
+//     const new_monto = monto;
+//   }
 
 
-  if (!conciliacionExistente1 | !conciliacionExistente2) {
-    // Si la tupla no está creada, crea una nueva instancia de conciliación
-    const nuevaConciliacion = resultados.create({
-      banco1,
-      banco2,
-      new_monto,
-    });
+//   if (!conciliacionExistente1 | !conciliacionExistente2) {
+//     // Si la tupla no está creada, crea una nueva instancia de conciliación
+//     const nuevaConciliacion = resultados.create({
+//       banco1,
+//       banco2,
+//       new_monto,
+//     });
 
-    // return resultado;
-  } else if (conciliacionExistente1) {
+//     // return resultado;
+//   } else if (conciliacionExistente1) {
 
-    const monto_sumado = conciliacionExistente1.monto + new_monto;
-    // Si la tupla ya existe, actualiza el monto existente
-    resultados.update(
-      { monto: monto_sumado },
-      {
-        where: {
-          banco1: banco1,
-          banco2: banco2,
-        },
-      }
-    );
-    // return resultado;
-  } else if (conciliacionExistente2) {
+//     const monto_sumado = conciliacionExistente1.monto + new_monto;
+//     // Si la tupla ya existe, actualiza el monto existente
+//     resultados.update(
+//       { monto: monto_sumado },
+//       {
+//         where: {
+//           banco1: banco1,
+//           banco2: banco2,
+//         },
+//       }
+//     );
+//     // return resultado;
+//   } else if (conciliacionExistente2) {
 
-    const monto_sumado = conciliacionExistente2.monto - new_monto;
-    // Si la tupla ya existe, actualiza el monto existente
-    resultados.update(
-      { monto: monto_sumado },
-      {
-        where: {
-          banco1: banco2,
-          banco2: banco1,
-        },
-      }
-    );
-    // return resultado;
-  }
-}
+//     const monto_sumado = conciliacionExistente2.monto - new_monto;
+//     // Si la tupla ya existe, actualiza el monto existente
+//     resultados.update(
+//       { monto: monto_sumado },
+//       {
+//         where: {
+//           banco1: banco2,
+//           banco2: banco1,
+//         },
+//       }
+//     );
+//     // return resultado;
+//   }
+// }
 
 // ENDPOINT SEND SUBSCRIPTION ********************************************************************************
 // app.post("/send_subscrition", async (req, res) => {
