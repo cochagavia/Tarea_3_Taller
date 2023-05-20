@@ -51,7 +51,7 @@ app.post("/recibe_transaction", async (req, res) => {
     if (decodedFields !== null) {
       const id = body.message.messageId;
 
-
+      procesarTransaccion(decodedFields.sourceBank, decodedFields.destinationBank, decodedFields.amount, decodedFields.operationType)
 
       const result = await message.findOne({
         where: { messageId: id },
@@ -158,7 +158,7 @@ function procesarTransaccion(banco1, banco2, monto, operacion) {
       new_monto,
     });
 
-    return resultado;
+    // return resultado;
   } else if (conciliacionExistente1) {
 
     const monto_sumado = conciliacionExistente1.monto + new_monto;
@@ -172,7 +172,7 @@ function procesarTransaccion(banco1, banco2, monto, operacion) {
         },
       }
     );
-    return resultado;
+    // return resultado;
   } else if (conciliacionExistente2) {
 
     const monto_sumado = conciliacionExistente2.monto - new_monto;
@@ -186,7 +186,7 @@ function procesarTransaccion(banco1, banco2, monto, operacion) {
         },
       }
     );
-    return resultado;
+    // return resultado;
   }
 }
 
