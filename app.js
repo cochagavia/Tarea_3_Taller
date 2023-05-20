@@ -60,7 +60,7 @@ app.post("/recibe_transaction", async (req, res) => {
       console.log(banco1, banco2, monto, operacion);
 
       // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
-      const conciliacionExistente1 = resultados.findOne({
+      const conciliacionExistente1 = await resultados.findOne({
         where: {
           banco1: banco1,
           banco2: banco2,
@@ -68,7 +68,7 @@ app.post("/recibe_transaction", async (req, res) => {
       });
     
       // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
-      const conciliacionExistente2 = resultados.findOne({
+      const conciliacionExistente2 = await resultados.findOne({
         where: {
           banco1: banco2,
           banco2: banco1,
