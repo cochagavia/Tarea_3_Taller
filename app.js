@@ -73,7 +73,7 @@ app.post("/recibe_transaction", async (req, res) => {
         },
       });
 
-      const new_monto = 0;
+      let new_monto = 0;
       if (operacion === "Envío de fondos") {
         new_monto = -monto;
       } else {
