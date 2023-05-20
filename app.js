@@ -126,6 +126,7 @@ function procesarTransaccion(banco1, banco2, monto, operacion) {
   // Realiza la suma o resta de los montos según corresponda
 
   // const resultado = banco1 + banco2 >= 0 ? monto : -monto;
+  console.log(banco1, banco2, monto, operacion);
 
   // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
   const conciliacionExistente1 = resultados.findOne({
