@@ -4,7 +4,7 @@ const app = express();
 const port = 3000;
 
 const { message } = require("./models");
-const { resultados } = require("./models");
+const { resultado } = require("./models");
 
 const ngrokUrl = "https://af9c-190-196-138-146.ngrok-free.app";
 app.use(express.json());
@@ -60,7 +60,7 @@ app.post("/recibe_transaction", async (req, res) => {
       console.log(banco1, banco2, monto, operacion);
 
       // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
-      const conciliacionExistente1 = await resultados.findOne({
+      const conciliacionExistente1 = await resultado.findOne({
         where: {
           banco1: banco1,
           banco2: banco2,
@@ -68,7 +68,7 @@ app.post("/recibe_transaction", async (req, res) => {
       });
     
       // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
-      const conciliacionExistente2 = await resultados.findOne({
+      const conciliacionExistente2 = await resultado.findOne({
         where: {
           banco1: banco2,
           banco2: banco1,
@@ -84,7 +84,7 @@ app.post("/recibe_transaction", async (req, res) => {
     
       if (!conciliacionExistente1 | !conciliacionExistente2) {
         // Si la tupla no está creada, crea una nueva instancia de conciliación
-        const nuevaConciliacion = resultados.create({
+        const nuevaConciliacion = resultado.create({
           banco1,
           banco2,
           new_monto,
@@ -95,7 +95,7 @@ app.post("/recibe_transaction", async (req, res) => {
     
         const monto_sumado = conciliacionExistente1.monto + new_monto;
         // Si la tupla ya existe, actualiza el monto existente
-        resultados.update(
+        resultado.update(
           { monto: monto_sumado },
           {
             where: {
@@ -109,7 +109,7 @@ app.post("/recibe_transaction", async (req, res) => {
     
         const monto_sumado = conciliacionExistente2.monto - new_monto;
         // Si la tupla ya existe, actualiza el monto existente
-        resultados.update(
+        resultado.update(
           { monto: monto_sumado },
           {
             where: {
