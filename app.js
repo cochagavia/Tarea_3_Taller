@@ -49,8 +49,6 @@ app.post("/recibe_transaction", async (req, res) => {
     console.log(decodedFields);
 
     if (decodedFields !== null) {
-      const id = body.message.messageId;
-
       // procesarTransaccion(decodedFields.sourceBank, decodedFields.destinationBank, decodedFields.amount, decodedFields.operationType, resultados)
 
       const banco1 = decodedFields.sourceBank;
@@ -66,7 +64,7 @@ app.post("/recibe_transaction", async (req, res) => {
           banco2: banco2,
         },
       });
-    
+
       // Verifica si la tupla de bancos ya está creada en el modelo de conciliación
       const conciliacionExistente2 = await resultado.findOne({
         where: {
@@ -74,25 +72,24 @@ app.post("/recibe_transaction", async (req, res) => {
           banco2: banco1,
         },
       });
-    
-      if(operacion === "Envío de fondos"){
-        const new_monto = -monto;
-      }else{
-        const new_monto = monto;
+
+      const new_monto = 0;
+      if (operacion === "Envío de fondos") {
+        new_monto = -monto;
+      } else {
+        new_monto = monto;
       }
-    
-    
+
       if (!conciliacionExistente1 | !conciliacionExistente2) {
         // Si la tupla no está creada, crea una nueva instancia de conciliación
         const nuevaConciliacion = resultado.create({
-          banco1,
-          banco2,
-          new_monto,
+          banco1: banco1,
+          banco2: banco2,
+          monto: new_monto,
         });
-    
+
         // return resultado;
       } else if (conciliacionExistente1) {
-    
         const monto_sumado = conciliacionExistente1.monto + new_monto;
         // Si la tupla ya existe, actualiza el monto existente
         resultado.update(
@@ -106,7 +103,6 @@ app.post("/recibe_transaction", async (req, res) => {
         );
         // return resultado;
       } else if (conciliacionExistente2) {
-    
         const monto_sumado = conciliacionExistente2.monto - new_monto;
         // Si la tupla ya existe, actualiza el monto existente
         resultado.update(
@@ -121,6 +117,7 @@ app.post("/recibe_transaction", async (req, res) => {
         // return resultado;
       }
 
+      const id = body.message.messageId;
       const result = await message.findOne({
         where: { messageId: id },
       });
@@ -188,7 +185,6 @@ function decodeISO8583(encodedMessage) {
   return decodedFields;
 }
 
-
 // // FUNCIÓN SUMAR O RESTAR RESULTADO ENTRE BANCOS ************************************************************************************************
 // function procesarTransaccion(banco1, banco2, monto, operacion, resultados) {
 //   // Realiza la suma o resta de los montos según corresponda
@@ -217,7 +213,6 @@ function decodeISO8583(encodedMessage) {
 //   }else{
 //     const new_monto = monto;
 //   }
-
 
 //   if (!conciliacionExistente1 | !conciliacionExistente2) {
 //     // Si la tupla no está creada, crea una nueva instancia de conciliación
